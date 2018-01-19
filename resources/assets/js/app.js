@@ -1,22 +1,34 @@
+angular
+    .module('app', [])
 
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+angular
+    .module('app')
+    .controller('AppController', AppController);
 
-require('./bootstrap');
+AppController.$inject = ['$http', '$scope'];
 
-window.Vue = require('vue');
+function AppController($http, $scope) {
+    var vm = this;
+    vm.transactions = []
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+    vm.submitSearch = function() {
 
-Vue.component('example', require('./components/Example.vue'));
+        var customer = $scope.customer;
+        var amount = $scope.amount
+        var date = $scope.date;
+        $http.get(`api/transaction/filtered/${customer}/${amount}/${date}/0/500`)
+            .then(function(res) {
+                if(res.status == 200 && res.data.transactions.length){
+                    vm.transactions = res.data.transactions
+                }
+            })
 
-const app = new Vue({
-    el: '#app'
-});
+        setTimeout(function() {
+            document.getElementById('transactions').DataTable();
+        }, 300)
+    }
+
+    vm.checkIfTransactionsEmpty = function() {
+        return !!vm.transactions.length;
+    }
+}
