@@ -17,9 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('customer/new/{name}', 'API\CustomerController@new_customer')->middleware('log');
+Route::get('customer/new/{name}', 'API\CustomerController@new_customer')->middleware(['log', 'auth:api']);
 
-Route::group(['prefix' => 'transaction', 'middleware' => 'log'], function () {
+Route::group(['prefix' => 'transaction', 'middleware' => ['log','auth:api']], function () {
     Route::get('new/{customerId}/{amount}', 'API\TransactionController@new_transaction');
     Route::get('find/{customerId}/{transactionId}', 'API\TransactionController@find_transaction');
 
